@@ -19,7 +19,8 @@ import {
     ChevronRight,
     Shield,
     Monitor,
-    Cpu
+    Cpu,
+    Satellite
 } from "lucide-react";
 import Link from "next/link";
 import { clsx, type ClassValue } from "clsx";
