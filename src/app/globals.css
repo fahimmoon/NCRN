@@ -24,13 +24,38 @@
       transform: scale(1.1);
     }
   }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes flicker {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.8;
+    }
+  }
 }
 
 @layer base {
   body {
-    @apply bg-brand-white text-brand-navy font-sans antialiased;
+    @apply bg-brand-navy text-brand-white font-sans antialiased;
     background-image:
-      radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.03) 0%, transparent 40%);
+      radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 0% 100%, rgba(99, 102, 241, 0.05) 0%, transparent 40%);
     background-attachment: fixed;
     min-height: 100vh;
   }
@@ -46,20 +71,29 @@
   }
 
   .glass-card-hover {
-    @apply transition-all duration-300;
+    @apply transition-all duration-500;
   }
 
   .glass-card-hover:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: translateY(-5px);
   }
 
   .pulsate {
     animation: pulsate 2s infinite;
   }
 
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-flicker {
+    animation: flicker 0.1s infinite;
+  }
+
   .animate-marquee {
-    animation: marquee 40s linear infinite;
+    animation: marquee 60s linear infinite;
   }
 
   @keyframes marquee {
@@ -72,39 +106,24 @@
     }
   }
 
-  .bento-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .text-glow-blue {
-    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-  }
-
-  .text-glow-green {
-    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-  }
-
   .scanline {
     width: 100%;
-    height: 100px;
-    z-index: 10;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(59, 130, 246, 0.02) 50%, rgba(0, 0, 0, 0) 100%);
-    opacity: 0.1;
+    height: 2px;
+    z-index: 50;
+    background: linear-gradient(to right, rgba(59, 130, 246, 0) 0%, rgba(59, 130, 246, 0.2) 50%, rgba(59, 130, 246, 0) 100%);
+    opacity: 0.5;
     position: absolute;
-    bottom: 100%;
-    animation: scanline 10s linear infinite;
+    animation: scanline-move 8s linear infinite;
     pointer-events: none;
   }
 
-  @keyframes scanline {
+  @keyframes scanline-move {
     0% {
-      bottom: 100%;
+      top: 0%;
     }
 
     100% {
-      bottom: -100px;
+      top: 100%;
     }
   }
 
@@ -120,5 +139,17 @@
 
   .animate-radar {
     animation: radar-beam 4s linear infinite;
+  }
+
+  /* Fade in up animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease-out;
+  }
+
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
