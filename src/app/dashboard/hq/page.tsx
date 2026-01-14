@@ -314,9 +314,9 @@ export default function HQDashboard() {
                                     </h4>
 
                                     <div className="space-y-8 flex-1 relative z-10">
-                                        <BarMetric label="Core Temp" value={42} status="safe" />
-                                        <BarMetric label="Uplink Success" value={99} status="safe" />
-                                        <BarMetric label="Node Collision" value={8} status="alert" invert />
+                                        <BarMetric label="Core Temp" value={42} />
+                                        <BarMetric label="Uplink Success" value={99} />
+                                        <BarMetric label="Node Collision" value={8} invert />
                                     </div>
 
                                     <div className="mt-auto pt-6 border-t border-white/5 flex justify-between items-center text-[10px] font-mono opacity-40 uppercase tracking-widest font-bold">
@@ -380,7 +380,7 @@ function RadarMarker({ top, left, label, status }: { top: string, left: string, 
     );
 }
 
-function BarMetric({ label, value, status, invert = false }: { label: string, value: number, status: string, invert?: boolean }) {
+function BarMetric({ label, value, invert = false }: { label: string, value: number, invert?: boolean }) {
     const getBarColor = () => {
         if (invert) return value > 50 ? "bg-brand-red" : "bg-brand-blue";
         if (value > 80) return "bg-brand-green";

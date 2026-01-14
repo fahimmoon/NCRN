@@ -32,8 +32,10 @@ export default function VillageDashboard() {
 
     useEffect(() => {
         if (latestAlert && latestAlert.id !== lastAlertId) {
-            setShowAlert(true);
             setLastAlertId(latestAlert.id);
+            // Small delay to avoid synchronous state cascade during render cycle
+            const timer = setTimeout(() => setShowAlert(true), 10);
+            return () => clearTimeout(timer);
         }
     }, [latestAlert, lastAlertId]);
 
