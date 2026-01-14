@@ -40,7 +40,6 @@ export default function HQDashboard() {
     const [isTransmitting, setIsTransmitting] = useState(false);
     const [currentTime, setCurrentTime] = useState("");
 
-    // Update clock every second
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(new Date().toUTCString().split(" ")[4]);
@@ -51,377 +50,225 @@ export default function HQDashboard() {
     const handleTransmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!message) return;
-
         setIsTransmitting(true);
         setTimeout(() => {
             transmitAlert(region, severity, message);
             setMessage("");
             setIsTransmitting(false);
-        }, 1500);
+        }, 1200);
     };
 
     return (
-        <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
-            {/* --- SIDEBAR COMPONENTS --- */}
-
-            {/* Mobile Backdrop */}
+        <div className="flex h-screen bg-slate-50 overflow-hidden font-sans text-brand-navy">
+            {/* MOBILE BACKDROP */}
             {isSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden"
+                    className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}
 
-            {/* Sidebar - Off-canvas Drawer */}
+            {/* COMPACT SIDEBAR (240px) */}
             <aside className={cn(
-                "fixed inset-y-0 left-0 w-[280px] bg-brand-navy text-white z-50 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0",
+                "fixed inset-y-0 left-0 w-[240px] bg-brand-navy text-white z-50 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0",
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                <div className="h-full flex flex-col p-8 space-y-12">
-                    {/* Logo Section */}
-                    <div className="flex items-center gap-4">
-                        <div className="p-2.5 bg-brand-blue rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.5)]">
-                            <Satellite className="w-7 h-7 text-white" />
+                <div className="h-full flex flex-col p-6 space-y-10">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-brand-blue rounded-lg shadow-lg">
+                            <Satellite className="w-5 h-5 text-white" />
                         </div>
                         <div className="flex flex-col -space-y-1">
-                            <span className="text-2xl font-black tracking-tighter uppercase whitespace-nowrap">NCRN<span className="text-brand-blue">.</span>HQ</span>
-                            <span className="text-[10px] font-mono font-bold text-brand-blue tracking-[0.2em] uppercase opacity-70">Mission Control</span>
+                            <span className="text-xl font-black tracking-tighter uppercase">NCRN<span className="text-brand-blue">.</span>HQ</span>
+                            <span className="text-[8px] font-mono font-bold text-brand-blue tracking-widest uppercase opacity-60">Control</span>
                         </div>
                     </div>
 
-                    {/* Navigation */}
-                    <nav className="flex-1 space-y-2">
-                        <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mb-6 ml-2">Command Center</p>
-                        <NavItem icon={<Activity className="w-4 h-4" />} label="Live Monitor" active />
-                        <NavItem icon={<MapIcon className="w-4 h-4" />} label="Geospatial" />
-                        <NavItem icon={<Database className="w-4 h-4" />} label="Node Clusters" />
-                        <NavItem icon={<Signal className="w-4 h-4" />} label="Telemetry" />
+                    <nav className="flex-1 space-y-1">
+                        <p className="text-[9px] font-mono font-black text-slate-500 uppercase tracking-widest mb-4 ml-2">Center</p>
+                        <NavItem icon={<Activity className="w-3.5 h-3.5" />} label="Monitor" active />
+                        <NavItem icon={<MapIcon className="w-3.5 h-3.5" />} label="Geospatial" />
+                        <NavItem icon={<Signal className="w-3.5 h-3.5" />} label="Telemetry" />
 
-                        <div className="pt-8">
-                            <p className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-[0.3em] mb-6 ml-2">System Admin</p>
-                            <NavItem icon={<Settings className="w-4 h-4" />} label="Security" />
-                            <NavItem icon={<Layers className="w-4 h-4" />} label="Architecture" />
+                        <div className="pt-6">
+                            <p className="text-[9px] font-mono font-black text-slate-500 uppercase tracking-widest mb-4 ml-2">Admin</p>
+                            <NavItem icon={<Settings className="w-3.5 h-3.5" />} label="Security" />
+                            <NavItem icon={<Layers className="w-3.5 h-3.5" />} label="Config" />
                         </div>
                     </nav>
 
-                    {/* User Section / Logout */}
-                    <Link href="/" title="Terminate Session" className="bg-white/5 border border-white/10 flex items-center gap-4 p-5 rounded-2xl hover:bg-brand-red/20 hover:border-brand-red/30 hover:text-white transition-all duration-300 group">
-                        <LogOut className="w-5 h-5 text-slate-500 group-hover:text-brand-red" />
-                        <div className="flex flex-col -space-y-1">
-                            <span className="text-[10px] uppercase font-black tracking-widest text-slate-300">Logout</span>
-                            <span className="text-[8px] font-mono opacity-40">TERMINATE_LINK</span>
-                        </div>
+                    <Link href="/" className="bg-white/5 border border-white/10 flex items-center gap-3 p-4 rounded-xl hover:bg-brand-red/10 transition-all text-slate-400 hover:text-white group">
+                        <LogOut className="w-4 h-4" />
+                        <span className="text-[10px] uppercase font-black tracking-widest">Logout</span>
                     </Link>
                 </div>
             </aside>
 
-            {/* --- MAIN CONTENT AREA --- */}
+            {/* MAIN LAYOUT */}
             <main className="flex-1 flex flex-col overflow-hidden relative">
-                {/* Top Header */}
-                <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 md:px-10 shrink-0 sticky top-0 z-30">
+                <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 lg:px-10 shrink-0 sticky top-0 z-30">
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setSidebarOpen(true)}
-                            className="p-2 hover:bg-slate-100 rounded-lg lg:hidden"
-                            title="Menu"
-                        >
-                            <Menu className="w-6 h-6 text-brand-navy" />
+                        <button onClick={() => setSidebarOpen(true)} className="p-1.5 hover:bg-slate-100 rounded-lg lg:hidden">
+                            <Menu className="w-5 h-5" />
                         </button>
-                        <div className="hidden sm:block">
-                            <h1 className="text-xl font-black text-brand-navy uppercase tracking-tight flex items-center gap-3">
-                                Operations <ChevronRight className="w-4 h-4 text-slate-300" /> <span className="text-brand-blue">Dashboard</span>
-                            </h1>
-                        </div>
+                        <h1 className="hidden sm:flex items-center gap-2 text-sm font-black uppercase tracking-tight">
+                            Operational <ChevronRight className="w-3 h-3 text-slate-300" /> <span className="text-brand-blue">Interface</span>
+                        </h1>
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <div className="hidden lg:flex items-center gap-8 border-r border-slate-200 pr-8">
-                            <HeaderMetric label="Satellites" value="24/24" status="safe" />
-                            <HeaderMetric label="Village Nodes" value="1,248" status="safe" />
+                        <div className="hidden md:flex items-center gap-6 border-r border-slate-100 pr-6">
+                            <HeaderMetric label="Sats" value="24/24" status="safe" />
+                            <HeaderMetric label="Nodes" value="1,248" status="safe" />
                         </div>
-
-                        <div className="flex items-center gap-4 bg-slate-50 p-2.5 px-4 rounded-xl border border-slate-200 font-mono">
+                        <div className="flex items-center gap-3 bg-slate-50 p-2 px-3 rounded-lg border border-slate-200">
                             <div className="text-right hidden xs:block">
-                                <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest leading-none">Global UTC</p>
-                                <p className="text-xs font-black text-brand-navy">{currentTime || "00:00:00"}</p>
+                                <p className="text-[8px] text-slate-400 uppercase font-black leading-none mb-1">UTC</p>
+                                <p className="text-xs font-mono font-black">{currentTime || "00:00"}</p>
                             </div>
-                            <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-brand-blue shadow-sm">
-                                <Clock className="w-4 h-4" />
-                            </div>
+                            <Clock className="w-4 h-4 text-brand-blue" />
                         </div>
                     </div>
                 </header>
 
-                {/* Scrollable Dashboard Workspace */}
-                <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar relative">
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                        {/* A. Top Row: Telemetry Cards */}
-                        <TelemetryCard label="Active Satellites" value="24" trend="+2%" icon={<Satellite className="w-5 h-5" />} />
-                        <TelemetryCard label="Village Nodes" value="1,248" trend="Stable" icon={<Radio className="w-5 h-5" />} />
-                        <TelemetryCard label="Seismic Activity" value="2.4" trend="Low" unit="Mag" icon={<Activity className="w-5 h-5" />} />
-                        <TelemetryCard label="Avg Latency" value="12" trend="-4ms" unit="ms" icon={<Signal className="w-5 h-5" />} />
+                <div className="flex-1 overflow-y-auto p-6 lg:p-10 custom-scrollbar">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                        <TelemetryCard label="Satellites" value="24" trend="+2%" icon={<Satellite className="w-4 h-4" />} />
+                        <TelemetryCard label="Nodes" value="1.2k" trend="Stable" icon={<Radio className="w-4 h-4" />} />
+                        <TelemetryCard label="Seismic" value="2.4" trend="Low" unit="M" icon={<Activity className="w-4 h-4" />} />
+                        <TelemetryCard label="Latency" value="12" trend="-4ms" unit="ms" icon={<Signal className="w-4 h-4" />} />
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-2 gap-8 mb-10 h-auto">
-                        {/* B. Main Map (Radar Visual) */}
-                        <div className="lg:col-span-2 lg:row-span-2 bg-brand-navy rounded-[2.5rem] p-8 relative overflow-hidden shadow-2xl min-h-[400px]">
-                            <div className="flex items-center justify-between mb-8 relative z-10">
-                                <div className="space-y-1">
-                                    <h3 className="text-white font-black uppercase tracking-tight flex items-center gap-3">
-                                        <Globe className="w-5 h-5 text-brand-blue" /> Live Satellite Feed
-                                    </h3>
-                                    <p className="text-[9px] font-mono text-brand-blue uppercase tracking-widest font-bold">ARC-GEO-SENSORS // ENABLED</p>
-                                </div>
-                                <div className="bg-white/5 border border-white/10 p-2 px-3 rounded-full flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-brand-green animate-pulse" />
-                                    <span className="text-[10px] font-mono text-white/60">SCAN ACTIVE</span>
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+                        <div className="lg:col-span-2 bg-brand-navy rounded-[2rem] p-6 relative overflow-hidden shadow-xl min-h-[340px]">
+                            <div className="flex items-center justify-between mb-4 relative z-10">
+                                <h3 className="text-white text-xs font-black uppercase tracking-tight flex items-center gap-2">
+                                    <Globe className="w-4 h-4 text-brand-blue" /> Satellite Feed
+                                </h3>
+                                <div className="bg-white/5 border border-white/10 p-1.5 px-3 rounded-full flex items-center gap-1.5">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse" />
+                                    <span className="text-[8px] font-mono text-white/50 uppercase">Scan Active</span>
                                 </div>
                             </div>
-
-                            {/* CSS Radar Scan Animation */}
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                {/* Radar Circles */}
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
                                 <div className="absolute w-[80%] h-[80%] border border-white/5 rounded-full" />
-                                <div className="absolute w-[60%] h-[60%] border border-white/5 rounded-full" />
-                                <div className="absolute w-[40%] h-[40%] border border-white/5 rounded-full" />
-                                <div className="absolute w-[20%] h-[20%] border border-white/10 rounded-full" />
-
-                                {/* The Scanning Beam */}
-                                <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_340deg,rgba(59,130,246,0.25)_360deg)] animate-radar rounded-full" />
-                                <div className="absolute inset-x-0 top-1/2 h-[1px] bg-white/5" />
-                                <div className="absolute inset-y-0 left-1/2 w-[1px] bg-white/5" />
+                                <div className="absolute w-[50%] h-[50%] border border-white/5 rounded-full" />
+                                <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_340deg,rgba(59,130,246,0.2)_360deg)] animate-radar rounded-full" />
                             </div>
-
-                            {/* Pulsing Dots (Active Nodes) */}
                             <RadarDot top="30%" left="40%" label="N-09" />
-                            <RadarDot top="60%" left="70%" label="ARC-S1" alert />
-                            <RadarDot top="45%" left="25%" label="BASE" active />
-
-                            <div className="absolute bottom-8 left-8 space-y-2 relative z-10">
-                                <p className="text-[12px] font-mono text-white/40 flex gap-4 uppercase font-bold">
-                                    <span>Lat: 69.42° N</span>
-                                    <span>Long: 133.72° W</span>
-                                </p>
-                            </div>
+                            <RadarDot top="60%" left="70%" label="ARC-1" alert />
                         </div>
 
-                        {/* C. Emergency Broadcast Terminal */}
-                        <div className="lg:col-span-2 lg:row-span-2 bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-xl flex flex-col justify-between">
-                            <div className="space-y-2 mb-8">
-                                <h3 className="text-2xl font-black text-brand-navy flex items-center gap-4">
-                                    <AlertTriangle className="w-7 h-7 text-brand-red" /> HQ Transmitter
+                        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-[2rem] p-8 shadow-md flex flex-col justify-between">
+                            <div className="space-y-1 mb-6">
+                                <h3 className="text-lg font-black flex items-center gap-3">
+                                    <AlertTriangle className="w-5 h-5 text-brand-red" /> Transmitter
                                 </h3>
-                                <p className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-widest">Interface for direct satellite uplink</p>
+                                <p className="text-[9px] font-mono font-bold text-slate-400 uppercase">Secure Uplink Protocol</p>
                             </div>
-
-                            <form onSubmit={handleTransmit} className="space-y-6">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest ml-1">Destination Sector</label>
-                                    <select
-                                        value={region}
-                                        onChange={(e) => setRegion(e.target.value)}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-black focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all outline-none"
-                                    >
-                                        <option>Sector Alpha-7</option>
-                                        <option>Aurora Settlement</option>
-                                        <option>Tundra Relay-09</option>
-                                        <option>Perma-Base Gamma</option>
-                                    </select>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest ml-1">Threat Priority</label>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <button
-                                            type="button"
-                                            onClick={() => setSeverity("Warning")}
-                                            className={cn(
-                                                "p-4 rounded-xl border font-black text-xs transition-all flex items-center justify-center gap-3",
-                                                severity === "Warning" ? "bg-brand-orange/10 border-brand-orange text-brand-orange" : "bg-slate-50 border-slate-200 text-slate-400"
-                                            )}
-                                        >
-                                            <Zap className="w-4 h-4" /> Warning
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setSeverity("Critical")}
-                                            className={cn(
-                                                "p-4 rounded-xl border font-black text-xs transition-all flex items-center justify-center gap-3",
-                                                severity === "Critical" ? "bg-brand-red/10 border-brand-red text-brand-red" : "bg-slate-50 border-slate-200 text-slate-400"
-                                            )}
-                                        >
-                                            <Shield className="w-4 h-4" /> Critical
-                                        </button>
+                            <form onSubmit={handleTransmit} className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-mono font-black text-slate-400 uppercase ml-1">Sector</label>
+                                        <select value={region} onChange={(e) => setRegion(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-[11px] font-black outline-none focus:ring-2 focus:ring-brand-blue/10">
+                                            <option>Alpha-7</option>
+                                            <option>Aurora</option>
+                                            <option>Tundra</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-mono font-black text-slate-400 uppercase ml-1">Priority</label>
+                                        <div className="flex gap-2">
+                                            <button type="button" onClick={() => setSeverity("Warning")} className={cn("flex-1 p-2.5 rounded-lg border text-[10px] font-black", severity === "Warning" ? "bg-brand-orange/10 border-brand-orange text-brand-orange" : "bg-slate-50 border-slate-200 text-slate-400")}>Warn</button>
+                                            <button type="button" onClick={() => setSeverity("Critical")} className={cn("flex-1 p-2.5 rounded-lg border text-[10px] font-black", severity === "Critical" ? "bg-brand-red/10 border-brand-red text-brand-red" : "bg-slate-50 border-slate-200 text-slate-400")}>Crit</button>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest ml-1">Directive Details</label>
-                                    <textarea
-                                        value={message}
-                                        onChange={(e) => setMessage(e.target.value)}
-                                        rows={4}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-brand-blue/5 transition-all resize-none outline-none"
-                                        placeholder="Input mission payload pack..."
-                                        required
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={isTransmitting}
-                                    className={cn(
-                                        "w-full h-16 rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-4 disabled:opacity-50 shadow-2xl",
-                                        isTransmitting ? "bg-brand-red text-white animate-pulse" : "bg-brand-navy hover:bg-slate-800 text-white"
-                                    )}
-                                >
-                                    {isTransmitting ? (
-                                        <>Encrypting Uplink...</>
-                                    ) : (
-                                        <>Transmit Alert <Send className="w-4 h-4" /></>
-                                    )}
+                                <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-[11px] font-medium outline-none resize-none" placeholder="Directive payload..." required />
+                                <button type="submit" disabled={isTransmitting} className={cn("w-full h-12 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg text-white", isTransmitting ? "bg-brand-red animate-pulse" : "bg-brand-navy hover:bg-slate-800")}>
+                                    {isTransmitting ? "Broadcasting..." : "Transmit directive"}
                                 </button>
                             </form>
                         </div>
                     </div>
 
-                    {/* D. Recent Activity Log (Full Width Table) */}
-                    <section className="bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-xl overflow-hidden">
-                        <div className="flex items-center justify-between mb-8">
-                            <div className="space-y-1">
-                                <h3 className="text-xl font-black text-brand-navy flex items-center gap-4 uppercase tracking-tight">
-                                    <Database className="w-6 h-6 text-brand-blue" /> Archive Log
-                                </h3>
-                                <p className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-[0.2em]">Live transmission database</p>
-                            </div>
+                    <section className="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm overflow-hidden">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Database className="w-5 h-5 text-brand-blue" />
+                            <h3 className="text-md font-black uppercase tracking-tight">Archive</h3>
                         </div>
-
-                        <div className="overflow-x-auto -mx-2">
-                            <table className="w-full border-collapse">
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
                                 <thead>
-                                    <tr className="border-b border-slate-100 italic">
-                                        <th className="px-6 py-4 text-left text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest">Time (UTC)</th>
-                                        <th className="px-6 py-4 text-left text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest">Sector</th>
-                                        <th className="px-6 py-4 text-left text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest">Directive Message</th>
-                                        <th className="px-6 py-4 text-left text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest">Priority</th>
-                                        <th className="px-6 py-4 text-right text-[10px] font-mono font-black text-slate-500 uppercase tracking-widest">Status</th>
+                                    <tr className="border-b border-slate-50">
+                                        <th className="px-4 py-3 text-left text-[9px] font-mono font-black text-slate-400 uppercase tracking-widest">UTC</th>
+                                        <th className="px-4 py-3 text-left text-[9px] font-mono font-black text-slate-400 uppercase tracking-widest">Sector</th>
+                                        <th className="px-4 py-3 text-left text-[9px] font-mono font-black text-slate-400 uppercase tracking-widest">Message</th>
+                                        <th className="px-4 py-3 text-right text-[9px] font-mono font-black text-slate-400 uppercase tracking-widest">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {alerts.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={5} className="px-6 py-20 text-center text-slate-400 font-mono text-xs opacity-50 italic">
-                                                No directives archived. System ready for transmission.
+                                    {alerts.map((alert) => (
+                                        <tr key={alert.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
+                                            <td className="px-4 py-4 text-[10px] font-mono font-bold text-slate-400">{new Date(alert.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                                            <td className="px-4 py-4 text-[11px] font-black uppercase">{alert.region}</td>
+                                            <td className="px-4 py-4 text-[11px] text-slate-500 font-medium truncate max-w-[200px]">{alert.message}</td>
+                                            <td className="px-4 py-4 text-right">
+                                                <span className="text-[9px] font-black text-brand-green uppercase flex items-center justify-end gap-1.5"><div className="w-1 h-1 rounded-full bg-brand-green" /> SENT</span>
                                             </td>
                                         </tr>
-                                    ) : (
-                                        alerts.map((alert, idx) => (
-                                            <tr key={alert.id} className="group hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 border-collapse">
-                                                <td className="px-6 py-5 text-xs font-mono font-bold text-slate-400">{new Date(alert.timestamp).toISOString().split('T')[1].split('.')[0]}</td>
-                                                <td className="px-6 py-5 text-sm font-black text-brand-navy uppercase tracking-tight">{alert.region}</td>
-                                                <td className="px-6 py-5 text-sm text-slate-500 font-medium max-w-md truncate">{alert.message}</td>
-                                                <td className="px-6 py-5">
-                                                    <span className={cn(
-                                                        "text-[9px] font-black uppercase px-2 py-1 rounded-md",
-                                                        alert.severity === 'Critical' ? "bg-brand-red/10 text-brand-red" : "bg-brand-orange/10 text-brand-orange"
-                                                    )}>
-                                                        {alert.severity}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-5 text-right">
-                                                    <span className="flex items-center justify-end gap-2 text-[10px] font-black text-brand-green uppercase tracking-widest">
-                                                        <div className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse" /> SENT
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
                     </section>
-
                 </div>
             </main>
         </div>
     );
 }
 
-// --- SUB-COMPONENTS ---
-
 function NavItem({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) {
     return (
-        <div className={cn(
-            "flex items-center gap-4 p-4 rounded-2xl cursor-pointer transition-all border-2",
-            active
-                ? "bg-brand-blue border-brand-blue/30 text-white shadow-xl shadow-brand-blue/30"
-                : "text-slate-500 border-transparent hover:bg-white/5 hover:text-white"
-        )}>
-            <div className={cn(
-                "p-2 rounded-xl",
-                active ? "bg-white/20" : "bg-white/5"
-            )}>
-                {icon}
-            </div>
-            <span className="text-xs font-black uppercase tracking-widest">{label}</span>
+        <div className={cn("flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border", active ? "bg-brand-blue border-brand-blue/20 text-white shadow-lg shadow-brand-blue/20" : "text-slate-500 border-transparent hover:bg-white/5 hover:text-white")}>
+            {icon}
+            <span className="text-[10px] font-black uppercase tracking-wider">{label}</span>
         </div>
     );
 }
 
 function HeaderMetric({ label, value, status }: { label: string, value: string, status: "safe" | "alert" | "critical" }) {
-    const getColor = () => {
-        if (status === "safe") return "text-brand-green";
-        if (status === "alert") return "text-brand-orange";
-        return "text-brand-red";
-    };
-
+    const color = status === "safe" ? "text-brand-green" : status === "alert" ? "text-brand-orange" : "text-brand-red";
     return (
         <div className="space-y-0.5">
-            <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-[0.2em]">{label}</span>
-            <p className={cn("text-xs font-black uppercase tracking-tight", getColor())}>{value}</p>
+            <span className="text-[8px] font-mono font-bold text-slate-400 uppercase">{label}</span>
+            <p className={cn("text-[11px] font-black uppercase", color)}>{value}</p>
         </div>
     );
 }
 
 function TelemetryCard({ label, value, trend, unit = "", icon }: { label: string, value: string, trend: string, unit?: string, icon: React.ReactNode }) {
     return (
-        <div className="bg-white border border-slate-200 p-6 rounded-[2rem] shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-            <div className="flex justify-between items-start mb-6">
-                <div className="p-3 bg-brand-navy text-white rounded-2xl shadow-lg group-hover:bg-brand-blue transition-colors duration-500">
-                    {icon}
-                </div>
-                <div className={cn(
-                    "text-[9px] font-mono font-black px-2 py-1 rounded-md flex items-center gap-1",
-                    trend.startsWith('+') ? "bg-brand-green/10 text-brand-green" : trend === "Stable" ? "bg-slate-100 text-slate-400" : "bg-brand-red/10 text-brand-red"
-                )}>
-                    {trend.startsWith('+') && <TrendingUp className="w-2.5 h-2.5" />} {trend}
-                </div>
+        <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start mb-4">
+                <div className="p-2 bg-brand-navy text-white rounded-lg">{icon}</div>
+                <span className={cn("text-[8px] font-mono font-black px-1.5 py-0.5 rounded", trend.startsWith('+') ? "bg-brand-green/10 text-brand-green" : "bg-slate-100 text-slate-400")}>{trend}</span>
             </div>
-            <div className="space-y-1">
-                <p className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">{label}</p>
-                <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-mono font-black tracking-tighter text-brand-navy">{value}</span>
-                    {unit && <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-tighter">{unit}</span>}
-                </div>
+            <p className="text-[9px] font-mono font-bold text-slate-400 uppercase">{label}</p>
+            <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-mono font-black text-brand-navy">{value}</span>
+                <span className="text-[10px] font-mono text-slate-300 font-bold">{unit}</span>
             </div>
         </div>
     );
 }
 
 function RadarDot({ top, left, label, active = false, alert = false }: { top: string, left: string, label: string, active?: boolean, alert?: boolean }) {
+    const color = alert ? "bg-brand-red" : active ? "bg-brand-green" : "bg-brand-blue";
     return (
-        <div className="absolute flex flex-col items-center gap-1.5" style={{ top, left }}>
-            <div className={cn(
-                "w-2.5 h-2.5 rounded-full border-2 border-white relative",
-                alert ? "bg-brand-red animate-ping" : (active ? "bg-brand-green shadow-[0_0_10px_brand-green]" : "bg-brand-blue")
-            )}>
-                <div className={cn(
-                    "absolute inset-0 rounded-full animate-pulse",
-                    alert ? "bg-brand-red" : (active ? "bg-brand-green" : "bg-brand-blue")
-                )} />
-            </div>
-            <span className="text-[8px] font-mono font-black bg-white/10 backdrop-blur-md px-1.5 py-0.5 rounded border border-white/5 text-white/60 uppercase">{label}</span>
+        <div className="absolute flex flex-col items-center gap-1" style={{ top, left }}>
+            <div className={cn("w-2 h-2 rounded-full border border-white", color, alert && "animate-ping")} />
+            <span className="text-[7px] font-mono font-black text-white/40 uppercase">{label}</span>
         </div>
     );
 }
